@@ -14,16 +14,15 @@ features <- read.table("data/features.txt")
 
 # Label columns
 varNames <- make.names(features$V2)
-varNames <- gsub("\\.\\.", "", varNames)
 names(testX) <- varNames
 names(trainX) <- varNames
 
-names(testY) <- "activity.ID"
-names(trainY) <- "activity.ID"
-names(testSubject) <- "subject.ID"
-names(trainSubject) <- "subject.ID"
+names(testY) <- "activityID"
+names(trainY) <- "activityID"
+names(testSubject) <- "subjectID"
+names(trainSubject) <- "subjectID"
 
-names(activityLabels) <- c("activity.ID", "activity.Name")
+names(activityLabels) <- c("activityID", "activityName")
 
 # Merge data into one table
 test <- cbind(testX, testSubject, testY)
@@ -36,12 +35,22 @@ meanStdInd <- which(meanStdLogical)
 extractedData <- allData[,c(meanStdInd, 562, 563)]
 
 # Add descriptive activity names
-labelledData <- left_join(extractedData, activityLabels, by = "activity.ID")
-labelledData <- select(labelledData, -(activity.ID))
+labelledData <- left_join(extractedData, activityLabels, by = "activityID")
+labelledData <- select(labelledData, -(activityID))
 
 # Summarise data
-groupedData <- group_by(labelledData, activity.Name, subject.ID)
+groupedData <- group_by(labelledData, subjectID, activityName)
 tidyData <- summarise_each(groupedData, funs(mean))
+
+# Clean column names
+colnames(tidyData) <- gsub("\\.\\.", "", colnames(tidyData))
+colnames(tidyData) <- gsub("BodyBody", "Body", colnames(tidyData))
+colnames(tidyData) <- gsub(".(mean|std).([XYZ])", "\\2\\1", colnames(tidyData))
+colnames(tidyData) <- gsub("Mag.", "Magnitude", colnames(tidyData))
+colnames(tidyData) <- gsub("std", "StandardDeviation", colnames(tidyData))
+colnames(tidyData) <- gsub("mean", "Mean", colnames(tidyData))
+colnames(tidyData) <- gsub("Acc", "Accelerometer", colnames(tidyData))
+colnames(tidyData) <- gsub("Gyro", "Gyroscope", colnames(tidyData))
 
 # Output data
 write.table(tidyData,"smartphoneData.txt", row.names = FALSE)

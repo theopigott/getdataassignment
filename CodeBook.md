@@ -1,91 +1,40 @@
 # Smartphone Accelerometer Data Code Book
 
 ## Raw data
-The data comes from experiments of 30 volunteers undergoing 6 activities (WALKING, WALKING_UPSTAIRS, WALKING_DOWNSTAIRS, SITTING, STANDING, LAYING) while wearing a smartphone. The embedded accelerometer captured linear acceleration and angular velocity on each axis (X, Y, Z).
+The data comes from experiments of 30 volunteers undergoing 6 activities (WALKING, WALKING_UPSTAIRS, WALKING_DOWNSTAIRS, SITTING, STANDING, LAYING) while wearing a smartphone. The embedded accelerometer and gyroscope captured linear acceleration and angular velocity on each axis (X, Y, Z).
 
-Further details may be found in the README from the original data at the [UCI repository](http://archive.ics.uci.edu/ml/datasets/Human+Activity+Recognition+Using+Smartphones)
+Full details of the original data may be found in the README at the [UCI repository](http://archive.ics.uci.edu/ml/datasets/Human+Activity+Recognition+Using+Smartphones)
 
 ## Transformation
 The table contains only the mean and standard deviation of each measurement. These are grouped by activity and subject with the average values tabulated.
 
+Steps taken in the script (`run_analysis.R`):
+
+* Read in original data as data frames and add column names.
+* Combine all dataframes into one dataframe (`rbind` and `cbind`).
+* Discard variables which aren't mean or standard derviation.
+* Add descriptive activity names (`left_join`).
+* Group observations by subject and activity (`group_by` and `summarise_each`).
+* Clean up column names to make formatting uniform (`gsub`) - use camelcase, consistent word ordering and no abbreviations.
+* Output table.
+
 ## Variables
-The first two columns identify the observation, giving the name of the activity (`activity.Name`) and an identifier for the subject (`subject.ID`).
+The first column identifies the subject (`subjectID`), the second identifies the activity (`activityName`).
 
-The remaining 66 columns are the average measurement corresponding to that subject and activity.
+The remaining 66 columns are the average measurement corresponding to that subject and activity. 
 
-Naming conventions are as in the original dataset: Prefix 't' denotes time domain signal, prefix 'f' denotes frequency domain signal. 'mean' and 'std' denote the mean and standard derviation respectively. Suffices 'X', 'Y', 'Z' denote each of the spacial axes, whereas 'Mag' denotes the magnitude of the 3d signal (under the Euclidian norm). 
+Key measurements are given in the following table. Full details can be found in the original dataset. Units from accelerometer are 'g's; units from gyroscope are rad/sec - both normalised to lie in the range [-1, 1].
 
-See original dataset for details of each measurement.
+|        Variable       | Description                                         |
+|:---------------------:|-----------------------------------------------------|
+|    BodyAccelometer    | Accelerometer measurement due to body movement      |
+|   GravityAccelometer  | Accelerometer measurement due to gravity            |
+| BodyAccelerometerJerk | Jerk of body acceleration measured by accelerometer |
+|     BodyGyroscope     | Gyroscope measurement due to body movement          |
+|      BodyGyroscopeJerk     | Jerk of angular movement measured by gyroscope      |
 
-Units for acceleration are 'g's; units from gyroscore are rad/seg.
+Column tables are made up of the above plus the following adjustments. 
 
-The full list of the 66 variables is as follows:
-
-|       Variable Name       |
-|:-------------------------:|
-|      tBodyAcc.mean.X      |
-|      tBodyAcc.mean.Y      |
-|      tBodyAcc.mean.Z      |
-|       tBodyAcc.std.X      |
-|       tBodyAcc.std.Y      |
-|       tBodyAcc.std.Z      |
-|     tGravityAcc.mean.X    |
-|     tGravityAcc.mean.Y    |
-|     tGravityAcc.mean.Z    |
-|     tGravityAcc.std.X     |
-|     tGravityAcc.std.Y     |
-|     tGravityAcc.std.Z     |
-|    tBodyAccJerk.mean.X    |
-|    tBodyAccJerk.mean.Y    |
-|    tBodyAccJerk.mean.Z    |
-|     tBodyAccJerk.std.X    |
-|     tBodyAccJerk.std.Y    |
-|     tBodyAccJerk.std.Z    |
-|      tBodyGyro.mean.X     |
-|      tBodyGyro.mean.Y     |
-|      tBodyGyro.mean.Z     |
-|      tBodyGyro.std.X      |
-|      tBodyGyro.std.Y      |
-|      tBodyGyro.std.Z      |
-|    tBodyGyroJerk.mean.X   |
-|    tBodyGyroJerk.mean.Y   |
-|    tBodyGyroJerk.mean.Z   |
-|    tBodyGyroJerk.std.X    |
-|    tBodyGyroJerk.std.Y    |
-|    tBodyGyroJerk.std.Z    |
-|      tBodyAccMag.mean     |
-|      tBodyAccMag.std      |
-|    tGravityAccMag.mean    |
-|     tGravityAccMag.std    |
-|    tBodyAccJerkMag.mean   |
-|    tBodyAccJerkMag.std    |
-|     tBodyGyroMag.mean     |
-|      tBodyGyroMag.std     |
-|   tBodyGyroJerkMag.mean   |
-|    tBodyGyroJerkMag.std   |
-|      fBodyAcc.mean.X      |
-|      fBodyAcc.mean.Y      |
-|      fBodyAcc.mean.Z      |
-|       fBodyAcc.std.X      |
-|       fBodyAcc.std.Y      |
-|       fBodyAcc.std.Z      |
-|    fBodyAccJerk.mean.X    |
-|    fBodyAccJerk.mean.Y    |
-|    fBodyAccJerk.mean.Z    |
-|     fBodyAccJerk.std.X    |
-|     fBodyAccJerk.std.Y    |
-|     fBodyAccJerk.std.Z    |
-|      fBodyGyro.mean.X     |
-|      fBodyGyro.mean.Y     |
-|      fBodyGyro.mean.Z     |
-|      fBodyGyro.std.X      |
-|      fBodyGyro.std.Y      |
-|      fBodyGyro.std.Z      |
-|      fBodyAccMag.mean     |
-|      fBodyAccMag.std      |
-|  fBodyBodyAccJerkMag.mean |
-|  fBodyBodyAccJerkMag.std  |
-|   fBodyBodyGyroMag.mean   |
-|    fBodyBodyGyroMag.std   |
-| fBodyBodyGyroJerkMag.mean |
-|  fBodyBodyGyroJerkMag.std |
+* Prefix 't' denotes time domain signal, prefix 'f' denotes frequency domain signal. 
+* Suffices 'X', 'Y', 'Z' denote measurements in each of the spacial directions, while 'Magnitude' denotes the Euclidean norm of the relevant vector.
+* Suffices 'Mean' and 'StandardDeviation' denote whether the variable is the mean or standard deviation of the measurement.
